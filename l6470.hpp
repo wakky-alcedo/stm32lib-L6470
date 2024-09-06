@@ -45,7 +45,7 @@ class L6470
         long GetABSpos();
         void StckPulse();
         
-        void SetInterrupt(uint8_t mode);
+        void SetInterrupt(SwMode mode);
         void SetStepClock(Direction dir);
 
         void HardReset();

@@ -265,11 +265,14 @@ void L6470::StckPulse(){
 //    delayMicroseconds(1);
 }
 
-void L6470::SetInterrupt(uint8_t mode){
+void L6470::SetInterrupt(SwMode mode){
     _config = GetParam(Addres::ADR_CONFIG,2);
 
-    if(mode == ON) _config = _config & 0xffef;
-    if(mode == OFF) _config = _config | 0x0010;
+    if(mode == SwMode::HardStopInterrupt){
+    	_config = _config & 0xffef;
+    }else if(mode == SwMode::UserDisposal){
+    	_config = _config | 0x0010;
+    }
 
     SetParam(Addres::ADR_CONFIG,2,_config);
 }

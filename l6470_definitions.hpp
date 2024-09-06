@@ -33,8 +33,10 @@ enum class Direction :uint8_t {
 	CCW = 0x01
 };
 
-#define ON 0x01
-#define OFF 0x00
+enum class SwMode : uint8_t {
+	HardStopInterrupt 	= 0x00,
+	UserDisposal 		= 0x01,
+};
 
 #define CMD_ACT_ON 0x08
 #define CMD_ACT_OFF 0x00
