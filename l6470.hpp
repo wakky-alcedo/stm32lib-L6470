@@ -1,5 +1,5 @@
-#ifndef L6470_H_
-#define L6470_H_
+#ifndef L6470_HPP_
+#define L6470_HPP_
 #include <spi.h>
 
 namespace l6470{

@@ -1,5 +1,5 @@
+#include <l6470.hpp>
 #include <SPI.h>
-#include "L6470.h"
 
 using namespace l6470;
 
