@@ -29,11 +29,11 @@ class L6470
 
         //--- Motor action functions --- //
         void run(uint32_t speed,uint8_t dir);
-        void move(uint32_t step,uint8_t dir,uint8_t wait = BUSY_ON);
-        void GoTo(uint32_t pos,uint8_t wait = BUSY_ON);
-        void GoToDir(uint32_t pos,uint8_t dir,uint8_t wait = BUSY_ON);
-        void GoUntil(uint32_t speed,uint8_t dir,uint8_t act,uint8_t wait = BUSY_ON);
-        void ReleaseSW(uint8_t dir,uint8_t act,uint8_t wait = BUSY_ON);
+        void move(uint32_t step,uint8_t dir,bool is_wait = true);
+        void GoTo(uint32_t pos,bool is_wait = true);
+        void GoToDir(uint32_t pos,uint8_t dir,bool is_wait = true);
+        void GoUntil(uint32_t speed,uint8_t dir,uint8_t act,bool is_wait = true);
+        void ReleaseSW(uint8_t dir,uint8_t act,bool is_wait = true);
         void GoHome();
         void GoMark();
         void ResetPos();
@@ -55,8 +55,8 @@ class L6470
         void setSPImode();
         uint8_t xfer(uint8_t send);
         void send24bit(uint32_t val);
-        uint8_t available();
-        void wait_available();
+        bool is_busy();
+        void wait_busy();
 
         uint8_t _stepmode;
         uint16_t _config;

@@ -30,6 +30,7 @@ namespace Command {
 
 #define CW 0x00
 #define CCW 0x01
+
 #define ON 0x01
 #define OFF 0x00
 
@@ -75,9 +76,6 @@ namespace Addres {
 #define MICRO_STEP5 32
 #define MICRO_STEP6 64
 #define MICRO_STEP7 128
-
-#define BUSY_ON 0
-#define BUSY_OFF 1
 
 #define SOFT_STOP 0
 #define HARD_STOP 1

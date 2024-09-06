@@ -92,12 +92,12 @@ inline void L6470::send24bit(uint32_t val){
     }
 }
 
-inline uint8_t L6470::available(){
-    return !HAL_GPIO_ReadPin(busy_pin.GPIOx, busy_pin.GPIO_Pin);
+inline bool L6470::is_busy(){
+    return (bool)!HAL_GPIO_ReadPin(busy_pin.GPIOx, busy_pin.GPIO_Pin);
 }
 
-inline void L6470::wait_available(){
-    while(available());
+inline void L6470::wait_busy(){
+    while(is_busy());
     HAL_Delay(1);
 }
 
@@ -208,7 +208,7 @@ void L6470::run(uint32_t speed,uint8_t dir){
     send24bit(speed);
 }
 
-void L6470::move(uint32_t step,uint8_t dir,uint8_t wait){
+void L6470::move(uint32_t step,uint8_t dir,bool is_wait){
     GetStepMode();
 
     step = step*_stepmode;
@@ -216,34 +216,34 @@ void L6470::move(uint32_t step,uint8_t dir,uint8_t wait){
     xfer(Command::CMD_MOVE | dir);
     send24bit(step);
 
-    if(wait == BUSY_ON)wait_available();
+    if(is_wait)wait_busy();
 }
 
-void L6470::GoTo(uint32_t pos,uint8_t wait){
+void L6470::GoTo(uint32_t pos,bool is_wait){
     xfer(Command::CMD_GOTO);
     send24bit(pos);
 
-    if(wait == BUSY_ON)wait_available();
+    if(is_wait)wait_busy();
 }
 
-void L6470::GoToDir(uint32_t pos,uint8_t dir,uint8_t wait){
+void L6470::GoToDir(uint32_t pos,uint8_t dir,bool is_wait){
     xfer(Command::CMD_GOTO_DIR | dir);
     send24bit(pos);
 
-    if(wait == BUSY_ON)wait_available();
+    if(is_wait)wait_busy();
 }
 
-void L6470::GoUntil(uint32_t speed,uint8_t dir,uint8_t act,uint8_t wait){
+void L6470::GoUntil(uint32_t speed,uint8_t dir,uint8_t act,bool is_wait){
     xfer(Command::CMD_GO_UNTIL | dir | act);
     send24bit(speed);
 
-    if(wait == BUSY_ON)wait_available();
+    if(is_wait)wait_busy();
 }
 
-void L6470::ReleaseSW(uint8_t dir,uint8_t act,uint8_t wait){
+void L6470::ReleaseSW(uint8_t dir,uint8_t act,bool is_wait){
     xfer(Command::CMD_RELEASE_SW | dir | act);
 
-    if(wait == BUSY_ON)wait_available();
+    if(is_wait)wait_busy();
 }
 
 void L6470::GoHome(){ xfer(Command::CMD_GO_HOME); }
