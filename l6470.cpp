@@ -203,17 +203,17 @@ int16_t L6470::GetStepMode(){
 }
 
 //--- Motor action functions --- //
-void L6470::run(uint32_t speed,uint8_t dir){
-    xfer(Command::CMD_RUN | dir);
+void L6470::run(uint32_t speed,Direction dir){
+    xfer(Command::CMD_RUN | (uint8_t)dir);
     send24bit(speed);
 }
 
-void L6470::move(uint32_t step,uint8_t dir,bool is_wait){
+void L6470::move(uint32_t step,Direction dir,bool is_wait){
     GetStepMode();
 
     step = step*_stepmode;
 
-    xfer(Command::CMD_MOVE | dir);
+    xfer(Command::CMD_MOVE | (uint8_t)dir);
     send24bit(step);
 
     if(is_wait)wait_busy();
@@ -226,22 +226,22 @@ void L6470::GoTo(uint32_t pos,bool is_wait){
     if(is_wait)wait_busy();
 }
 
-void L6470::GoToDir(uint32_t pos,uint8_t dir,bool is_wait){
-    xfer(Command::CMD_GOTO_DIR | dir);
+void L6470::GoToDir(uint32_t pos,Direction dir,bool is_wait){
+    xfer(Command::CMD_GOTO_DIR | (uint8_t)dir);
     send24bit(pos);
 
     if(is_wait)wait_busy();
 }
 
-void L6470::GoUntil(uint32_t speed,uint8_t dir,uint8_t act,bool is_wait){
-    xfer(Command::CMD_GO_UNTIL | dir | act);
+void L6470::GoUntil(uint32_t speed,Direction dir,uint8_t act,bool is_wait){
+    xfer(Command::CMD_GO_UNTIL | (uint8_t)dir | act);
     send24bit(speed);
 
     if(is_wait)wait_busy();
 }
 
-void L6470::ReleaseSW(uint8_t dir,uint8_t act,bool is_wait){
-    xfer(Command::CMD_RELEASE_SW | dir | act);
+void L6470::ReleaseSW(Direction dir,uint8_t act,bool is_wait){
+    xfer(Command::CMD_RELEASE_SW | (uint8_t)dir | act);
 
     if(is_wait)wait_busy();
 }
@@ -274,8 +274,8 @@ void L6470::SetInterrupt(uint8_t mode){
     SetParam(Addres::ADR_CONFIG,2,_config);
 }
 
-void L6470::SetStepClock(uint8_t dir){
-    xfer(Command::CMD_STEP_CLOCK | dir);
+void L6470::SetStepClock(Direction dir){
+    xfer(Command::CMD_STEP_CLOCK | (uint8_t)dir);
 }
 
 void L6470::HardReset(){

@@ -28,12 +28,12 @@ class L6470
         void SetStepMode(uint8_t mode);
 
         //--- Motor action functions --- //
-        void run(uint32_t speed,uint8_t dir);
-        void move(uint32_t step,uint8_t dir,bool is_wait = true);
+        void run(uint32_t speed,Direction dir);
+        void move(uint32_t step,Direction dir,bool is_wait = true);
         void GoTo(uint32_t pos,bool is_wait = true);
-        void GoToDir(uint32_t pos,uint8_t dir,bool is_wait = true);
-        void GoUntil(uint32_t speed,uint8_t dir,uint8_t act,bool is_wait = true);
-        void ReleaseSW(uint8_t dir,uint8_t act,bool is_wait = true);
+        void GoToDir(uint32_t pos,Direction dir,bool is_wait = true);
+        void GoUntil(uint32_t speed,Direction dir,uint8_t act,bool is_wait = true);
+        void ReleaseSW(Direction dir,uint8_t act,bool is_wait = true);
         void GoHome();
         void GoMark();
         void ResetPos();
@@ -46,7 +46,7 @@ class L6470
         void StckPulse();
         
         void SetInterrupt(uint8_t mode);
-        void SetStepClock(uint8_t dir);
+        void SetStepClock(Direction dir);
 
         void HardReset();
         void SoftReset();

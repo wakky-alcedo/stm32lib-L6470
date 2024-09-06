@@ -28,8 +28,10 @@ namespace Command {
 	constexpr uint8_t CMD_GET_STATUS 	= 0xD0;
 }
 
-#define CW 0x00
-#define CCW 0x01
+enum class Direction :uint8_t {
+	CW  = 0x00,
+	CCW = 0x01
+};
 
 #define ON 0x01
 #define OFF 0x00
