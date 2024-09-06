@@ -38,8 +38,10 @@ enum class SwMode : uint8_t {
 	UserDisposal 		= 0x01,
 };
 
-#define CMD_ACT_ON 0x08
-#define CMD_ACT_OFF 0x00
+enum class Act : uint8_t {
+	OFF = 0x00,
+	ON  = 0x08,
+};
 
 //L6470 Addres
 namespace Addres {
