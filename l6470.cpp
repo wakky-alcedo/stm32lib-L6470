@@ -1,28 +1,49 @@
-#include <arduino.h>
 #include <SPI.h>
 #include "L6470.h"
 
-L6470::L6470(uint8_t CS, uint8_t FLAG, uint8_t BUSY, uint8_t STCK, uint8_t RST)
+using namespace l6470;
+
+L6470::L6470(SPI_HandleTypeDef& hspi, GPIO_pin cs_pin, GPIO_pin flag_pin, GPIO_pin busy_pin, GPIO_pin stck_pin, GPIO_pin rst_pin):
+	hspi(&hspi),
+	cs_pin(cs_pin),
+	flag_pin(flag_pin),
+	busy_pin(busy_pin),
+	stck_pin(stck_pin),
+	rst_pin(rst_pin)
 {
-    _cs = CS;
-    _flag = FLAG;
-    _busy = BUSY;
-    _stck = STCK;
-    _rst = RST;
     _config = 0x0000;
 
-    pinMode(_cs,OUTPUT);
-    pinMode(_flag,INPUT);
-    pinMode(_busy,INPUT);
-    pinMode(_stck,OUTPUT);
-    pinMode(_rst,OUTPUT);
-    
-    digitalWrite(_rst, HIGH);
-    digitalWrite(_cs,HIGH);
+//    pinMode(_cs,OUTPUT);
+//    pinMode(_flag,INPUT);
+//    pinMode(_busy,INPUT);
+//    pinMode(_stck,OUTPUT);
+//    pinMode(_rst,OUTPUT);
+
 }
+L6470::L6470(SPI_HandleTypeDef& hspi, GPIO_pin cs_pin, GPIO_pin flag_pin, GPIO_pin busy_pin, GPIO_pin stck_pin):
+	hspi(&hspi),
+	cs_pin(cs_pin),
+	flag_pin(flag_pin),
+	busy_pin(busy_pin),
+	stck_pin(stck_pin)
+{
+    _config = 0x0000;
+}
+
+L6470::L6470(SPI_HandleTypeDef& hspi, GPIO_pin cs_pin):
+	hspi(&hspi),
+	cs_pin(cs_pin)
+{
+    _config = 0x0000;
+}
+
 
 //--- basic functions ---//
 void L6470::begin(){
+	if (rst_pin.GPIOx != 0x00) {
+		HAL_GPIO_WritePin(rst_pin.GPIOx, rst_pin.GPIO_Pin, GPIO_PIN_SET);
+	}
+    HAL_GPIO_WritePin(cs_pin.GPIOx, cs_pin.GPIO_Pin, GPIO_PIN_SET);
 
     setSPImode();
     HardReset();
@@ -44,8 +65,8 @@ void L6470::begin(){
 }
 
 inline void L6470::setSPImode(){
-  SPI.setDataMode(SPI_MODE3);
-  SPI.setBitOrder(MSBFIRST);
+//  SPI.setDataMode(SPI_MODE3);
+//  SPI.setBitOrder(MSBFIRST);
 }
 
 void L6470::SetHoldKVAL(uint8_t val){
@@ -56,11 +77,12 @@ inline uint8_t L6470::xfer(uint8_t send){
     uint8_t buf = 0;
 
     setSPImode();
-
-    digitalWrite(_cs, LOW);
-    buf = SPI.transfer(send);
-    digitalWrite(_cs, HIGH);
-    delayMicroseconds(1);
+//    while(!HAL_GPIO_ReadPin(busy_pin.GPIOx, busy_pin.GPIO_Pin)){} //BESYが解除されるまで待機
+    HAL_GPIO_WritePin(cs_pin.GPIOx, cs_pin.GPIO_Pin, GPIO_PIN_RESET);
+//	HAL_SPI_TransmitReceive(hspi,(uint8_t*)&send, (uint8_t*)&buf, sizeof(send), 1000);
+	HAL_SPI_Transmit(hspi,(uint8_t*)&send, sizeof(send), 1000);
+    HAL_GPIO_WritePin(cs_pin.GPIOx, cs_pin.GPIO_Pin, GPIO_PIN_SET);
+//    delayMicroseconds(1);
     return buf;
 }
 
@@ -71,12 +93,12 @@ inline void L6470::send24bit(uint32_t val){
 }
 
 inline uint8_t L6470::available(){
-    return !digitalRead(_busy);
+    return !HAL_GPIO_ReadPin(busy_pin.GPIOx, busy_pin.GPIO_Pin);
 }
 
 inline void L6470::wait_available(){
     while(available());
-    delay(1);
+    HAL_Delay(1);
 }
 
 //--- Set or Get comunicate functions ---//
@@ -113,31 +135,31 @@ void L6470::SetStepMode(uint8_t mode){
         case FULL_STEP:
             SetParam(ADR_STEP_MODE,1,0x00);
             break;
-            
+
         case MICRO_STEP1:
             SetParam(ADR_STEP_MODE,1,0x01);
             break;
-            
+
         case MICRO_STEP2:
             SetParam(ADR_STEP_MODE,1,0x02);
             break;
-            
+
         case MICRO_STEP3:
             SetParam(ADR_STEP_MODE,1,0x03);
             break;
-            
+
         case MICRO_STEP4:
             SetParam(ADR_STEP_MODE,1,0x04);
             break;
-            
+
         case MICRO_STEP5:
             SetParam(ADR_STEP_MODE,1,0x05);
             break;
-            
+
         case MICRO_STEP6:
             SetParam(ADR_STEP_MODE,1,0x06);
             break;
-            
+
         case MICRO_STEP7:
             SetParam(ADR_STEP_MODE,1,0x07);
             break;
@@ -153,28 +175,28 @@ int16_t L6470::GetStepMode(){
     switch(buf){
         case 0x00:
             return FULL_STEP;
-            
+
         case 0x01:
             return MICRO_STEP1;
-            
+
         case 0x02:
             return MICRO_STEP2;
-            
+
         case 0x03:
             return MICRO_STEP3;
-            
+
         case 0x04:
             return MICRO_STEP4;
-            
+
         case 0x05:
             return MICRO_STEP5;
-            
+
         case 0x06:
             return MICRO_STEP6;
-            
+
         case 0x07:
             return MICRO_STEP7;
-            
+
         default:
             return -1;
     }
@@ -198,29 +220,29 @@ void L6470::move(uint32_t step,uint8_t dir,uint8_t wait){
 }
 
 void L6470::GoTo(uint32_t pos,uint8_t wait){
-    xfer(CMD_GOTO); 
+    xfer(CMD_GOTO);
     send24bit(pos);
 
     if(wait == BUSY_ON)wait_available();
 }
 
 void L6470::GoToDir(uint32_t pos,uint8_t dir,uint8_t wait){
-    xfer(CMD_GOTO_DIR | dir); 
+    xfer(CMD_GOTO_DIR | dir);
     send24bit(pos);
-    
+
     if(wait == BUSY_ON)wait_available();
 }
 
 void L6470::GoUntil(uint32_t speed,uint8_t dir,uint8_t act,uint8_t wait){
     xfer(CMD_GO_UNTIL | dir | act);
     send24bit(speed);
-    
+
     if(wait == BUSY_ON)wait_available();
 }
 
 void L6470::ReleaseSW(uint8_t dir,uint8_t act,uint8_t wait){
     xfer(CMD_RELEASE_SW | dir | act);
-    
+
     if(wait == BUSY_ON)wait_available();
 }
 
@@ -237,10 +259,10 @@ long L6470::GetABSpos(){
 }
 
 void L6470::StckPulse(){
-    digitalWrite(_stck,HIGH);
-    delayMicroseconds(1);
-    digitalWrite(_stck,LOW);
-    delayMicroseconds(1);
+    HAL_GPIO_WritePin(stck_pin.GPIOx, stck_pin.GPIO_Pin, GPIO_PIN_SET);
+//    delayMicroseconds(1);
+    HAL_GPIO_WritePin(stck_pin.GPIOx, stck_pin.GPIO_Pin, GPIO_PIN_RESET);
+//    delayMicroseconds(1);
 }
 
 void L6470::SetInterrupt(uint8_t mode){
@@ -257,9 +279,11 @@ void L6470::SetStepClock(uint8_t dir){
 }
 
 void L6470::HardReset(){
-    digitalWrite(_rst,LOW);
-    delay(500);
-    digitalWrite(_rst,HIGH);
+	if (rst_pin.GPIOx != 0x00) {
+	    HAL_GPIO_WritePin(rst_pin.GPIOx, rst_pin.GPIO_Pin, GPIO_PIN_RESET);
+	    HAL_Delay(500);
+	    HAL_GPIO_WritePin(rst_pin.GPIOx, rst_pin.GPIO_Pin, GPIO_PIN_SET);
+	}
 }
 
 void L6470::SoftReset(){
@@ -268,5 +292,6 @@ void L6470::SoftReset(){
     xfer(CMD_NOP);
     xfer(CMD_NOP);
     xfer(CMD_RESET_DEVICE);
-    delay(100);
+    HAL_Delay(100);
 }
+

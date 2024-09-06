@@ -1,6 +1,13 @@
 #ifndef L6470_H_
 #define L6470_H_
-#include <Arduino.h>
+#include <spi.h>
+
+namespace l6470{
+
+struct GPIO_pin {
+	GPIO_TypeDef* GPIOx;
+	uint16_t GPIO_Pin;
+};
 
 //L6470 Action commands
 #define CMD_NOP 0x00
@@ -78,8 +85,9 @@
 class L6470
 {
     public:
-        L6470(uint8_t CS, uint8_t FLAG, uint8_t BUSY, uint8_t STCK, uint8_t RST);
-        L6470(uint8_t CS, uint8_t FLAG, uint8_t BUSY, uint8_t STCK);
+        L6470(SPI_HandleTypeDef& hspi, GPIO_pin CS, GPIO_pin FLAG, GPIO_pin BUSY, GPIO_pin STCK, GPIO_pin RST);
+        L6470(SPI_HandleTypeDef& hspi, GPIO_pin CS, GPIO_pin FLAG, GPIO_pin BUSY, GPIO_pin STCK);
+        L6470(SPI_HandleTypeDef& hspi, GPIO_pin CS);
 
         //--- basic functions ---//
         void begin();
@@ -124,12 +132,15 @@ class L6470
 
         uint8_t _stepmode;
         uint16_t _config;
-        uint8_t _cs;
-        uint8_t _flag;
-        uint8_t _busy;
-        uint8_t _stck;
-        uint8_t _rst;
+        SPI_HandleTypeDef* hspi;
+        GPIO_pin cs_pin;
+		GPIO_pin flag_pin;
+		GPIO_pin busy_pin;
+		GPIO_pin stck_pin;
+		GPIO_pin rst_pin;
         uint8_t _cmd;
+};
+
 };
 
 #endif
