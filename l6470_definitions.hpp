@@ -2,7 +2,7 @@
 #define _L6470_DEF
 
 #include <stdint.h>
-#include <unordered_map>
+#include <array>
 
 namespace l6470{
 
@@ -86,16 +86,7 @@ enum class StepMode : uint8_t {
 	MICRO_STEP128 	= 0b111
 };
 
-const std::unordered_map<StepMode, uint8_t> num_step = {
-	{ StepMode::FULL_STEP,  	1 },
-	{ StepMode::MICRO_STEP002, 	2 },
-	{ StepMode::MICRO_STEP004, 	4 },
-	{ StepMode::MICRO_STEP008, 	8 },
-	{ StepMode::MICRO_STEP016,	16 },
-	{ StepMode::MICRO_STEP032, 	32 },
-	{ StepMode::MICRO_STEP064,	64 },
-	{ StepMode::MICRO_STEP128, 	128 }
-};
+constexpr std::array<uint8_t, 8> num_step = {1, 2, 4, 8, 16, 32, 64, 128};
 
 #define SOFT_STOP 0
 #define HARD_STOP 1

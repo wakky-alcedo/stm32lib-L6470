@@ -152,7 +152,7 @@ void L6470::run(uint32_t speed,Direction dir){
 void L6470::move(uint32_t step,Direction dir,bool is_wait){
     GetStepMode();
 
-    step = step*num_step.at(_stepmode);
+    step = step*num_step[(uint8_t)_stepmode];
 
     xfer(Command::CMD_MOVE | (uint8_t)dir);
     send24bit(step);
