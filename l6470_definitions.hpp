@@ -45,33 +45,61 @@ enum class Act : uint8_t {
 };
 
 //L6470 Addres
-namespace Addres {
-	constexpr uint8_t ADR_ABS_POS 		= 0x01;
-	constexpr uint8_t ADR_EL_POS 		= 0x02;
-	constexpr uint8_t ADR_MARK 			= 0x03;
-	constexpr uint8_t ADR_SPEED 		= 0x04;
-	constexpr uint8_t ADR_ACC 			= 0x05;
-	constexpr uint8_t ADR_DEC 			= 0x06;
-	constexpr uint8_t ADR_MAX_SPEED 	= 0x07;
-	constexpr uint8_t ADR_MIN_SPEED 	= 0x08;
-	constexpr uint8_t ADR_FS_SPD 		= 0x15;
-	constexpr uint8_t ADR_KVAL_HOLD 	= 0x09;
-	constexpr uint8_t ADR_KVAL_RUN 		= 0x0A;
-	constexpr uint8_t ADR_KVAL_ACC 		= 0x0B;
-	constexpr uint8_t ADR_KVAL_DEC 		= 0x0C;
-	constexpr uint8_t ADR_INT_SPEED 	= 0x0D;
-	constexpr uint8_t ADR_ST_SLP 		= 0x0E;
-	constexpr uint8_t ADR_FN_SLP_ACC 	= 0x0F;
-	constexpr uint8_t ADR_FN_SLP_DEC 	= 0x10;
-	constexpr uint8_t ADR_K_THERM 		= 0x11;
-	constexpr uint8_t ADR_ADC_OUT 		= 0x12;
-	constexpr uint8_t ADR_OCD_TH 		= 0x13;
-	constexpr uint8_t ADR_STALL_TH 		= 0x14;
-	constexpr uint8_t ADR_STEP_MODE 	= 0x16;
-	constexpr uint8_t ADR_ALARME_EN 	= 0x17;
-	constexpr uint8_t ADR_CONFIG 		= 0x18;
-	constexpr uint8_t ADR_STATUS 		= 0x19;
-}
+//namespace Addres {
+//	constexpr uint8_t ADR_ABS_POS 		= 0x01;
+//	constexpr uint8_t ADR_EL_POS 		= 0x02;
+//	constexpr uint8_t ADR_MARK 			= 0x03;
+//	constexpr uint8_t ADR_SPEED 		= 0x04;
+//	constexpr uint8_t ADR_ACC 			= 0x05;
+//	constexpr uint8_t ADR_DEC 			= 0x06;
+//	constexpr uint8_t ADR_MAX_SPEED 	= 0x07;
+//	constexpr uint8_t ADR_MIN_SPEED 	= 0x08;
+//	constexpr uint8_t ADR_FS_SPD 		= 0x15;
+//	constexpr uint8_t ADR_KVAL_HOLD 	= 0x09;
+//	constexpr uint8_t ADR_KVAL_RUN 		= 0x0A;
+//	constexpr uint8_t ADR_KVAL_ACC 		= 0x0B;
+//	constexpr uint8_t ADR_KVAL_DEC 		= 0x0C;
+//	constexpr uint8_t ADR_INT_SPEED 	= 0x0D;
+//	constexpr uint8_t ADR_ST_SLP 		= 0x0E;
+//	constexpr uint8_t ADR_FN_SLP_ACC 	= 0x0F;
+//	constexpr uint8_t ADR_FN_SLP_DEC 	= 0x10;
+//	constexpr uint8_t ADR_K_THERM 		= 0x11;
+//	constexpr uint8_t ADR_ADC_OUT 		= 0x12;
+//	constexpr uint8_t ADR_OCD_TH 		= 0x13;
+//	constexpr uint8_t ADR_STALL_TH 		= 0x14;
+//	constexpr uint8_t ADR_STEP_MODE 	= 0x16;
+//	constexpr uint8_t ADR_ALARME_EN 	= 0x17;
+//	constexpr uint8_t ADR_CONFIG 		= 0x18;
+//	constexpr uint8_t ADR_STATUS 		= 0x19;
+//}
+
+enum class Addres : uint8_t {
+	ADR_ABS_POS 	= 0x01,
+	ADR_EL_POS 		= 0x02,
+	ADR_MARK 		= 0x03,
+	ADR_SPEED 		= 0x04,
+	ADR_ACC 		= 0x05,
+	ADR_DEC 		= 0x06,
+	ADR_MAX_SPEED 	= 0x07,
+	ADR_MIN_SPEED 	= 0x08,
+	ADR_FS_SPD 		= 0x15,
+	ADR_KVAL_HOLD 	= 0x09,
+	ADR_KVAL_RUN 	= 0x0A,
+	ADR_KVAL_ACC 	= 0x0B,
+	ADR_KVAL_DEC 	= 0x0C,
+	ADR_INT_SPEED 	= 0x0D,
+	ADR_ST_SLP 		= 0x0E,
+	ADR_FN_SLP_ACC 	= 0x0F,
+	ADR_FN_SLP_DEC 	= 0x10,
+	ADR_K_THERM 	= 0x11,
+	ADR_ADC_OUT 	= 0x12,
+	ADR_OCD_TH 		= 0x13,
+	ADR_STALL_TH 	= 0x14,
+	ADR_STEP_MODE 	= 0x16,
+	ADR_ALARME_EN 	= 0x17,
+	ADR_CONFIG 		= 0x18,
+	ADR_STATUS 		= 0x19
+};
 
 constexpr uint8_t MASK_STEP_SEL = 0x07; //0b0111
 

@@ -21,8 +21,8 @@ class L6470
         void begin();
 
         //--- Set or Get comunicate functions ---//
-        uint32_t GetParam(uint8_t addr,uint8_t size);
-        uint32_t SetParam(uint8_t addr,uint8_t size,uint8_t val);
+        uint32_t GetParam(Addres addr,uint8_t size);
+        uint32_t SetParam(Addres addr,uint8_t size,uint8_t val);
         void SetHoldKVAL(uint8_t val);
         StepMode GetStepMode();
         void SetStepMode(StepMode mode);

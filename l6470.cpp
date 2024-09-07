@@ -102,10 +102,10 @@ inline void L6470::wait_busy(){
 }
 
 //--- Set or Get comunicate functions ---//
-uint32_t L6470::GetParam(uint8_t addr,uint8_t size){
+uint32_t L6470::GetParam(Addres addr,uint8_t size){
     uint32_t buf;
 
-    _cmd = Command::CMD_GET_PARAM | addr;
+    _cmd = Command::CMD_GET_PARAM | (uint8_t)addr;
 
     xfer(_cmd);
     for (int i = 0; i < size; i++){
@@ -115,10 +115,10 @@ uint32_t L6470::GetParam(uint8_t addr,uint8_t size){
     return buf;
 }
 
-uint32_t L6470::SetParam(uint8_t addr,uint8_t size,uint8_t val){
+uint32_t L6470::SetParam(Addres addr,uint8_t size,uint8_t val){
     uint32_t buf;
 
-    _cmd = Command::CMD_SET_PARAM | addr;
+    _cmd = Command::CMD_SET_PARAM | (uint8_t)addr;
 
     xfer(_cmd);
     for (int i = 0; i < size; i++){
