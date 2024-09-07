@@ -24,8 +24,8 @@ class L6470
         uint32_t GetParam(uint8_t addr,uint8_t size);
         uint32_t SetParam(uint8_t addr,uint8_t size,uint8_t val);
         void SetHoldKVAL(uint8_t val);
-        int16_t GetStepMode();
-        void SetStepMode(uint8_t mode);
+        StepMode GetStepMode();
+        void SetStepMode(StepMode mode);
 
         //--- Motor action functions --- //
         void run(uint32_t speed,Direction dir);
@@ -58,7 +58,7 @@ class L6470
         bool is_busy();
         void wait_busy();
 
-        uint8_t _stepmode;
+        StepMode _stepmode;
         uint16_t _config;
         SPI_HandleTypeDef* hspi;
         GPIO_pin cs_pin;

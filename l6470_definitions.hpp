@@ -2,6 +2,7 @@
 #define _L6470_DEF
 
 #include <stdint.h>
+#include <unordered_map>
 
 namespace l6470{
 
@@ -74,14 +75,27 @@ namespace Addres {
 
 constexpr uint8_t MASK_STEP_SEL = 0x07; //0b0111
 
-#define FULL_STEP 1
-#define MICRO_STEP1 2
-#define MICRO_STEP2 4
-#define MICRO_STEP3 8
-#define MICRO_STEP4 16
-#define MICRO_STEP5 32
-#define MICRO_STEP6 64
-#define MICRO_STEP7 128
+enum class StepMode : uint8_t {
+	FULL_STEP 		= 0b000,
+	MICRO_STEP002 	= 0b001, // Half step
+	MICRO_STEP004 	= 0b010,
+	MICRO_STEP008 	= 0b011,
+	MICRO_STEP016 	= 0b100,
+	MICRO_STEP032 	= 0b101,
+	MICRO_STEP064 	= 0b110,
+	MICRO_STEP128 	= 0b111
+};
+
+const std::unordered_map<StepMode, uint8_t> num_step = {
+	{ StepMode::FULL_STEP,  	1 },
+	{ StepMode::MICRO_STEP002, 	2 },
+	{ StepMode::MICRO_STEP004, 	4 },
+	{ StepMode::MICRO_STEP008, 	8 },
+	{ StepMode::MICRO_STEP016,	16 },
+	{ StepMode::MICRO_STEP032, 	32 },
+	{ StepMode::MICRO_STEP064,	64 },
+	{ StepMode::MICRO_STEP128, 	128 }
+};
 
 #define SOFT_STOP 0
 #define HARD_STOP 1

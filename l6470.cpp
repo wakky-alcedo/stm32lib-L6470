@@ -126,80 +126,21 @@ uint32_t L6470::SetParam(uint8_t addr,uint8_t size,uint8_t val){
     }
 }
 
-void L6470::SetStepMode(uint8_t mode){
+void L6470::SetStepMode(StepMode mode){
     uint8_t buf;
     buf = GetParam(Addres::ADR_STEP_MODE,1);
     buf = buf & MASK_STEP_SEL;
 
-    switch(mode){
-        case FULL_STEP:
-            SetParam(Addres::ADR_STEP_MODE,1,0x00);
-            break;
+    SetParam(Addres::ADR_STEP_MODE,1,(uint8_t)mode);
 
-        case MICRO_STEP1:
-            SetParam(Addres::ADR_STEP_MODE,1,0x01);
-            break;
-
-        case MICRO_STEP2:
-            SetParam(Addres::ADR_STEP_MODE,1,0x02);
-            break;
-
-        case MICRO_STEP3:
-            SetParam(Addres::ADR_STEP_MODE,1,0x03);
-            break;
-
-        case MICRO_STEP4:
-            SetParam(Addres::ADR_STEP_MODE,1,0x04);
-            break;
-
-        case MICRO_STEP5:
-            SetParam(Addres::ADR_STEP_MODE,1,0x05);
-            break;
-
-        case MICRO_STEP6:
-            SetParam(Addres::ADR_STEP_MODE,1,0x06);
-            break;
-
-        case MICRO_STEP7:
-            SetParam(Addres::ADR_STEP_MODE,1,0x07);
-            break;
-    }
     _stepmode = GetStepMode();
 }
 
-int16_t L6470::GetStepMode(){
+StepMode L6470::GetStepMode(){
     uint8_t buf;
     buf = GetParam(Addres::ADR_STEP_MODE,1);
     buf = buf & MASK_STEP_SEL;
-
-    switch(buf){
-        case 0x00:
-            return FULL_STEP;
-
-        case 0x01:
-            return MICRO_STEP1;
-
-        case 0x02:
-            return MICRO_STEP2;
-
-        case 0x03:
-            return MICRO_STEP3;
-
-        case 0x04:
-            return MICRO_STEP4;
-
-        case 0x05:
-            return MICRO_STEP5;
-
-        case 0x06:
-            return MICRO_STEP6;
-
-        case 0x07:
-            return MICRO_STEP7;
-
-        default:
-            return -1;
-    }
+    return (StepMode)buf;
 }
 
 //--- Motor action functions --- //
@@ -211,7 +152,7 @@ void L6470::run(uint32_t speed,Direction dir){
 void L6470::move(uint32_t step,Direction dir,bool is_wait){
     GetStepMode();
 
-    step = step*_stepmode;
+    step = step*num_step.at(_stepmode);
 
     xfer(Command::CMD_MOVE | (uint8_t)dir);
     send24bit(step);
