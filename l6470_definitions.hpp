@@ -72,7 +72,7 @@ namespace Addres {
 	constexpr uint8_t ADR_STATUS 		= 0x19;
 }
 
-#define MASK_STEP_SEL 0x07;
+constexpr uint8_t MASK_STEP_SEL = 0x07; //0b0111
 
 #define FULL_STEP 1
 #define MICRO_STEP1 2
