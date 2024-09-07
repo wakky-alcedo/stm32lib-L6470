@@ -88,9 +88,6 @@ enum class StepMode : uint8_t {
 
 constexpr std::array<uint8_t, 8> num_step = {1, 2, 4, 8, 16, 32, 64, 128};
 
-#define SOFT_STOP 0
-#define HARD_STOP 1
-
 }
 
 #endif
