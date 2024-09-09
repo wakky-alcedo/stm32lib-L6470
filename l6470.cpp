@@ -102,9 +102,7 @@ uint32_t L6470::get_param(Addres addr, uint8_t size){
     return buf;
 }
 
-uint32_t L6470::set_param(Addres addr, uint8_t size, uint8_t val){
-    uint32_t buf;
-
+void L6470::set_param(Addres addr, uint8_t size, uint8_t val){
     cmd = Command::CMD_SET_PARAM | (uint8_t)addr;
 
     xfer(cmd);
