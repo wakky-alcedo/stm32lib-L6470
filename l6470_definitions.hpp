@@ -28,6 +28,27 @@ namespace Command {
 	constexpr uint8_t CMD_HARD_HIZ 		= 0xA8;
 	constexpr uint8_t CMD_GET_STATUS 	= 0xD0;
 }
+//enum class Command : uint8_t {
+//	CMD_NOP 			= 0x00,
+//	CMD_SET_PARAM 		= 0x00,
+//	CMD_GET_PARAM 		= 0x20,
+//	CMD_RUN 			= 0x50,
+//	CMD_STEP_CLOCK 		= 0x58,
+//	CMD_MOVE 		    = 0x40,
+//	CMD_GOTO 		    = 0x60,
+//	CMD_GOTO_DIR 	    = 0x68,
+//	CMD_GO_UNTIL 	    = 0x82,
+//	CMD_RELEASE_SW 		= 0x92,
+//	CMD_GO_HOME 		= 0x70,
+//	CMD_GO_MARK 		= 0x78,
+//	CMD_RESET_POS 		= 0xD8,
+//	CMD_RESET_DEVICE	= 0xC0,
+//	CMD_SOFT_STOP 		= 0xB0,
+//	CMD_HARD_STOP 		= 0xB8,
+//	CMD_SOFT_HIZ 		= 0xA0,
+//	CMD_HARD_HIZ 		= 0xA8,
+//	CMD_GET_STATUS 		= 0xD0,
+//};
 
 enum class Direction :uint8_t {
 	CW  = 0x00,
@@ -43,35 +64,6 @@ enum class Act : uint8_t {
 	OFF = 0x00,
 	ON  = 0x08,
 };
-
-//L6470 Addres
-//namespace Addres {
-//	constexpr uint8_t ADR_ABS_POS 		= 0x01;
-//	constexpr uint8_t ADR_EL_POS 		= 0x02;
-//	constexpr uint8_t ADR_MARK 			= 0x03;
-//	constexpr uint8_t ADR_SPEED 		= 0x04;
-//	constexpr uint8_t ADR_ACC 			= 0x05;
-//	constexpr uint8_t ADR_DEC 			= 0x06;
-//	constexpr uint8_t ADR_MAX_SPEED 	= 0x07;
-//	constexpr uint8_t ADR_MIN_SPEED 	= 0x08;
-//	constexpr uint8_t ADR_FS_SPD 		= 0x15;
-//	constexpr uint8_t ADR_KVAL_HOLD 	= 0x09;
-//	constexpr uint8_t ADR_KVAL_RUN 		= 0x0A;
-//	constexpr uint8_t ADR_KVAL_ACC 		= 0x0B;
-//	constexpr uint8_t ADR_KVAL_DEC 		= 0x0C;
-//	constexpr uint8_t ADR_INT_SPEED 	= 0x0D;
-//	constexpr uint8_t ADR_ST_SLP 		= 0x0E;
-//	constexpr uint8_t ADR_FN_SLP_ACC 	= 0x0F;
-//	constexpr uint8_t ADR_FN_SLP_DEC 	= 0x10;
-//	constexpr uint8_t ADR_K_THERM 		= 0x11;
-//	constexpr uint8_t ADR_ADC_OUT 		= 0x12;
-//	constexpr uint8_t ADR_OCD_TH 		= 0x13;
-//	constexpr uint8_t ADR_STALL_TH 		= 0x14;
-//	constexpr uint8_t ADR_STEP_MODE 	= 0x16;
-//	constexpr uint8_t ADR_ALARME_EN 	= 0x17;
-//	constexpr uint8_t ADR_CONFIG 		= 0x18;
-//	constexpr uint8_t ADR_STATUS 		= 0x19;
-//}
 
 enum class Addres : uint8_t {
 	ADR_ABS_POS 	= 0x01,
