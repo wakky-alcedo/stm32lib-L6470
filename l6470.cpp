@@ -59,6 +59,8 @@ void L6470::set_kval_hold(uint8_t val){
 }
 
 inline uint8_t L6470::transmit_receve(uint8_t transmit_data){
+	wait_busy();
+
 	uint8_t receve_data = 0;
     HAL_GPIO_WritePin(cs_pin.gpio_x, cs_pin.gpio_pin, GPIO_PIN_RESET);
     HAL_SPI_TransmitReceive(hspi,(uint8_t*)&transmit_data, (uint8_t*)&receve_data, sizeof(transmit_data), timeout);
@@ -83,7 +85,7 @@ inline bool L6470::is_busy(){
 
 inline void L6470::wait_busy(){
     while(is_busy());
-    HAL_Delay(1);
+//    HAL_Delay(1);
 }
 
 //--- Set or Get comunicate functions ---//

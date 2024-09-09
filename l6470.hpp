@@ -30,11 +30,11 @@ public:
 
     //--- Motor action functions --- //
     void run(uint32_t speed, Direction dir);
-    void move(uint32_t step, Direction dir, bool is_wait = true);
-    void go_to(uint32_t pos, bool is_wait = true);
-    void go_to_dir(uint32_t pos, Direction dir, bool is_wait = true);
-    void go_until(uint32_t speed, Direction dir, uint8_t act, bool is_wait = true);
-    void release_sw(Direction dir, uint8_t act, bool is_wait = true);
+    void move(uint32_t step, Direction dir, bool is_wait = false);
+    void go_to(uint32_t pos, bool is_wait = false);
+    void go_to_dir(uint32_t pos, Direction dir, bool is_wait = false);
+    void go_until(uint32_t speed, Direction dir, uint8_t act, bool is_wait = false);
+    void release_sw(Direction dir, uint8_t act, bool is_wait = false);
     void go_home();
     void go_mark();
     void reset_pos();
