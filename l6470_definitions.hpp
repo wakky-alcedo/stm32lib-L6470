@@ -65,7 +65,7 @@ enum class Act : uint8_t {
 	ON  = 0x08,
 };
 
-enum class Addres : uint8_t {
+enum class Address : uint8_t {
 	ADR_ABS_POS 	= 0x01,
 	ADR_EL_POS 		= 0x02,
 	ADR_MARK 		= 0x03,

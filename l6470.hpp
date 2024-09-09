@@ -21,8 +21,8 @@ public:
     void begin();
 
     //--- Set or Get communicate functions ---//
-    uint32_t get_param(Addres addr, uint8_t size);
-    void set_param(Addres addr, uint8_t size, uint8_t val);
+    uint32_t get_param(Address addr, uint8_t size);
+    void set_param(Address addr, uint8_t size, uint8_t val);
     void set_hold_kval(uint8_t val);
     StepMode get_step_mode();
     void set_step_mode(StepMode mode);
