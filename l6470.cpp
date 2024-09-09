@@ -60,8 +60,7 @@ inline uint8_t L6470::transmit_receve(uint8_t send){
 
 //    while(!HAL_GPIO_ReadPin(busy_pin.gpio_x, busy_pin.GPIO_Pin)){} //BESYが解除されるまで待機
     HAL_GPIO_WritePin(cs_pin.gpio_x, cs_pin.gpio_pin, GPIO_PIN_RESET);
-//    HAL_SPI_TransmitReceive(hspi,(uint8_t*)&send, (uint8_t*)&buf, sizeof(send), 1000); // todo これを有効にする
-    HAL_SPI_Transmit(hspi,(uint8_t*)&send, sizeof(send), 1000);
+    HAL_SPI_TransmitReceive(hspi,(uint8_t*)&send, (uint8_t*)&buf, sizeof(send), 1000);
     HAL_GPIO_WritePin(cs_pin.gpio_x, cs_pin.gpio_pin, GPIO_PIN_SET);
 //    delayMicroseconds(1);
     return buf;
@@ -74,7 +73,11 @@ inline void L6470::transmit_24bit(uint32_t val){
 }
 
 inline bool L6470::is_busy(){
-    return (bool)!HAL_GPIO_ReadPin(busy_pin.gpio_x, busy_pin.gpio_pin);
+	if (busy_pin.gpio_x != 0x00) {
+		return !(bool)HAL_GPIO_ReadPin(busy_pin.gpio_x, busy_pin.gpio_pin);
+	}else{
+		return false;
+	}
 }
 
 inline void L6470::wait_busy(){
