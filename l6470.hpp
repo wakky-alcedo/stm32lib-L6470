@@ -1,71 +1,71 @@
 #ifndef L6470_HPP_
 #define L6470_HPP_
+
 #include <spi.h>
 #include <l6470_definitions.hpp>
 
-namespace l6470{
+namespace l6470 {
 
-struct GPIO_pin {
-	GPIO_TypeDef* GPIOx;
-	uint16_t GPIO_Pin;
+struct GPIO_Pin {
+    GPIO_TypeDef* gpio_x;
+    uint16_t gpio_pin;
 };
 
-class L6470
-{
-    public:
-        L6470(SPI_HandleTypeDef& hspi, GPIO_pin CS, GPIO_pin FLAG, GPIO_pin BUSY, GPIO_pin STCK, GPIO_pin RST);
-        L6470(SPI_HandleTypeDef& hspi, GPIO_pin CS, GPIO_pin FLAG, GPIO_pin BUSY, GPIO_pin STCK);
-        L6470(SPI_HandleTypeDef& hspi, GPIO_pin CS);
+class L6470 {
+public:
+	L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin, GPIO_Pin flag_pin, GPIO_Pin busy_pin, GPIO_Pin stck_pin, GPIO_Pin rst_pin);
+	L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin, GPIO_Pin flag_pin, GPIO_Pin busy_pin, GPIO_Pin stck_pin);
+	L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin);
 
-        //--- basic functions ---//
-        void begin();
+    //--- basic functions ---//
+    void begin();
 
-        //--- Set or Get comunicate functions ---//
-        uint32_t GetParam(Addres addr,uint8_t size);
-        uint32_t SetParam(Addres addr,uint8_t size,uint8_t val);
-        void SetHoldKVAL(uint8_t val);
-        StepMode GetStepMode();
-        void SetStepMode(StepMode mode);
+    //--- Set or Get communicate functions ---//
+    uint32_t get_param(Addres addr, uint8_t size);
+    uint32_t set_param(Addres addr, uint8_t size, uint8_t val);
+    void set_hold_kval(uint8_t val);
+    StepMode get_step_mode();
+    void set_step_mode(StepMode mode);
 
-        //--- Motor action functions --- //
-        void run(uint32_t speed,Direction dir);
-        void move(uint32_t step,Direction dir,bool is_wait = true);
-        void GoTo(uint32_t pos,bool is_wait = true);
-        void GoToDir(uint32_t pos,Direction dir,bool is_wait = true);
-        void GoUntil(uint32_t speed,Direction dir,uint8_t act,bool is_wait = true);
-        void ReleaseSW(Direction dir,uint8_t act,bool is_wait = true);
-        void GoHome();
-        void GoMark();
-        void ResetPos();
-        void HardStop();
-        void SoftStop();
-        void HardHiz();
-        void SoftHiz();
+    //--- Motor action functions --- //
+    void run(uint32_t speed, Direction dir);
+    void move(uint32_t step, Direction dir, bool is_wait = true);
+    void go_to(uint32_t pos, bool is_wait = true);
+    void go_to_dir(uint32_t pos, Direction dir, bool is_wait = true);
+    void go_until(uint32_t speed, Direction dir, uint8_t act, bool is_wait = true);
+    void release_sw(Direction dir, uint8_t act, bool is_wait = true);
+    void go_home();
+    void go_mark();
+    void reset_pos();
+    void hard_stop();
+    void soft_stop();
+    void hard_hiz();
+    void soft_hiz();
 
-        long GetABSpos();
-        void StckPulse();
+    long get_abs_pos();
+    void stck_pulse();
         
-        void SetInterrupt(SwMode mode);
-        void SetStepClock(Direction dir);
+    void set_interrupt(SwMode mode);
+    void set_step_clock(Direction dir);
 
-        void HardReset();
-        void SoftReset();
+    void hard_reset();
+    void soft_reset();
 
-    private:
-        uint8_t xfer(uint8_t send);
-        void send24bit(uint32_t val);
-        bool is_busy();
-        void wait_busy();
+private:
+    uint8_t xfer(uint8_t send);
+    void send_24bit(uint32_t val);
+    bool is_busy();
+    void wait_busy();
 
-        StepMode _stepmode;
-        uint16_t _config;
-        SPI_HandleTypeDef* hspi;
-        GPIO_pin cs_pin;
-		GPIO_pin flag_pin;
-		GPIO_pin busy_pin;
-		GPIO_pin stck_pin;
-		GPIO_pin rst_pin;
-        uint8_t _cmd;
+    StepMode step_mode;
+    uint16_t config;
+    SPI_HandleTypeDef* hspi;
+    GPIO_Pin cs_pin;
+    GPIO_Pin flag_pin;
+    GPIO_Pin busy_pin;
+    GPIO_Pin stck_pin;
+    GPIO_Pin rst_pin;
+    uint8_t cmd;
 };
 
 };
