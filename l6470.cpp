@@ -86,7 +86,7 @@ inline void L6470::wait_busy(){
 uint32_t L6470::get_param(Addres addr, uint8_t size){
     xfer(Command::CMD_GET_PARAM | (uint8_t)addr);
 
-    uint32_t buf;
+    uint32_t buf = 0;
     for (int i = 0; i < size; i++){
         buf |= xfer(Command::CMD_NOP) << (8*(size-1-i));
     }
