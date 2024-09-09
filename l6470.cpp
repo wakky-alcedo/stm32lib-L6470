@@ -39,20 +39,20 @@ void L6470::begin(){
     hard_reset();
     soft_reset();
 
-    set_param(Address::ADR_ACC,0x40);
-    set_param(Address::ADR_DEC,0x40);
-    set_param(Address::ADR_MAX_SPEED,0x03f);
-    set_param(Address::ADR_MIN_SPEED,0xfff);
-    set_param(Address::ADR_FS_SPD,0x3ff);
+    set_param(Address::ADR_ACC,2,0x40);
+    set_param(Address::ADR_DEC,2,0x40);
+    set_param(Address::ADR_MAX_SPEED,2,0x03f);
+    set_param(Address::ADR_MIN_SPEED,2,0xfff);
+    set_param(Address::ADR_FS_SPD,2,0x3ff);
     set_hold_kval(125);
-    set_param(Address::ADR_KVAL_RUN,0xff);
-    set_param(Address::ADR_KVAL_ACC,0xff);
-    set_param(Address::ADR_KVAL_DEC,0xff);
+    set_param(Address::ADR_KVAL_RUN,1,0xff);
+    set_param(Address::ADR_KVAL_ACC,1,0xff);
+    set_param(Address::ADR_KVAL_DEC,1,0xff);
     set_step_mode(StepMode::MICRO_STEP128);
 }
 
 void L6470::set_hold_kval(uint8_t val){
-    set_param(Address::ADR_KVAL_HOLD,val);
+    set_param(Address::ADR_KVAL_HOLD,1,val);
 }
 
 inline uint8_t L6470::xfer(uint8_t send){
@@ -83,31 +83,31 @@ inline void L6470::wait_busy(){
 }
 
 //--- Set or Get comunicate functions ---//
-uint32_t L6470::get_param(Address addr){
+uint32_t L6470::get_param(Address addr, uint8_t size){
     xfer(Command::CMD_GET_PARAM | (uint8_t)addr);
 
     uint32_t buf = 0;
-    for (int i = 0; i < adress_size[(uint8_t)addr]; i++){
-        buf |= xfer(Command::CMD_NOP) << (8*(adress_size[(uint8_t)addr]-1-i));
+    for (int i = 0; i < size; i++){
+        buf |= xfer(Command::CMD_NOP) << (8*(size-1-i));
     }
     return buf;
 }
 
-void L6470::set_param(Address addr, uint8_t val){
+void L6470::set_param(Address addr, uint8_t size, uint8_t val){
     xfer(Command::CMD_SET_PARAM | (uint8_t)addr);
 
-    for (int i = 0; i < adress_size[(uint8_t)addr]; i++){
-        xfer(val >> (8*(adress_size[(uint8_t)addr]-1-i)));
+    for (int i = 0; i < size; i++){
+        xfer(val >> (8*(size-1-i)));
     }
 }
 
 void L6470::set_step_mode(StepMode mode){
-    set_param(Address::ADR_STEP_MODE,(uint8_t)mode);
+    set_param(Address::ADR_STEP_MODE,1,(uint8_t)mode);
     step_mode = get_step_mode();
 }
 
 StepMode L6470::get_step_mode(){
-    return (StepMode)(get_param(Address::ADR_STEP_MODE) & MASK_STEP_SEL);
+    return (StepMode)(get_param(Address::ADR_STEP_MODE,1) & MASK_STEP_SEL);
 }
 
 //--- Motor action functions --- //
@@ -161,7 +161,7 @@ void L6470::hard_hiz(){ xfer(Command::CMD_HARD_HIZ); }
 void L6470::soft_hiz(){ xfer(Command::CMD_SOFT_HIZ); }
 
 long L6470::get_abs_pos(){
-    return (long)((get_param(Address::ADR_ABS_POS)) << 10) / 1024;
+    return (long)((get_param(Address::ADR_ABS_POS,3)) << 10) / 1024;
 }
 
 void L6470::stck_pulse(){
@@ -172,7 +172,7 @@ void L6470::stck_pulse(){
 }
 
 void L6470::set_interrupt(SwMode mode){
-	uint16_t config = get_param(Address::ADR_CONFIG);
+	uint16_t config = get_param(Address::ADR_CONFIG,2);
 
     if(mode == SwMode::HardStopInterrupt){
         config = config & 0xffef;
@@ -180,7 +180,7 @@ void L6470::set_interrupt(SwMode mode){
         config = config | 0x0010;
     }
 
-    set_param(Address::ADR_CONFIG,config);
+    set_param(Address::ADR_CONFIG,2,config);
 }
 
 void L6470::set_step_clock(Direction dir){

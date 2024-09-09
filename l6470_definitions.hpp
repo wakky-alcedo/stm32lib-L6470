@@ -93,11 +93,6 @@ enum class Address : uint8_t {
 	ADR_STATUS 		= 0x19
 };
 
-/**
- * @brief Size of each address in bytes
- */
-constexpr std::array<uint8_t, 25> adress_size = {3, 2, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2};
-
 constexpr uint8_t MASK_STEP_SEL = 0x07; //0b0111
 
 enum class StepMode : uint8_t {
