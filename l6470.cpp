@@ -3,28 +3,31 @@
 
 using namespace l6470;
 
-L6470::L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin, GPIO_Pin flag_pin, GPIO_Pin busy_pin, GPIO_Pin stck_pin, GPIO_Pin rst_pin):
+L6470::L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin, GPIO_Pin flag_pin, GPIO_Pin busy_pin, GPIO_Pin stck_pin, GPIO_Pin rst_pin, uint8_t timeout):
     hspi(&hspi),
     cs_pin(cs_pin),
     flag_pin(flag_pin),
     busy_pin(busy_pin),
     stck_pin(stck_pin),
-    rst_pin(rst_pin)
+    rst_pin(rst_pin),
+	timeout(timeout)
 {
 }
 
-L6470::L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin, GPIO_Pin flag_pin, GPIO_Pin busy_pin, GPIO_Pin stck_pin):
+L6470::L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin, GPIO_Pin flag_pin, GPIO_Pin busy_pin, GPIO_Pin stck_pin, uint8_t timeout):
     hspi(&hspi),
     cs_pin(cs_pin),
     flag_pin(flag_pin),
     busy_pin(busy_pin),
-    stck_pin(stck_pin)
+    stck_pin(stck_pin),
+	timeout(timeout)
 {
 }
 
-L6470::L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin):
+L6470::L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin, uint8_t timeout):
     hspi(&hspi),
-    cs_pin(cs_pin)
+    cs_pin(cs_pin),
+	timeout(timeout)
 {
 }
 
@@ -55,20 +58,18 @@ void L6470::set_kval_hold(uint8_t val){
     set_param(Address::ADR_KVAL_HOLD,1,val);
 }
 
-inline uint8_t L6470::transmit_receve(uint8_t send){
-    uint8_t buf = 0;
-
-//    while(!HAL_GPIO_ReadPin(busy_pin.gpio_x, busy_pin.GPIO_Pin)){} //BESYが解除されるまで待機
+inline uint8_t L6470::transmit_receve(uint8_t transmit_data){
+	uint8_t receve_data = 0;
     HAL_GPIO_WritePin(cs_pin.gpio_x, cs_pin.gpio_pin, GPIO_PIN_RESET);
-    HAL_SPI_TransmitReceive(hspi,(uint8_t*)&send, (uint8_t*)&buf, sizeof(send), 1000);
+    HAL_SPI_TransmitReceive(hspi,(uint8_t*)&transmit_data, (uint8_t*)&receve_data, sizeof(transmit_data), timeout);
     HAL_GPIO_WritePin(cs_pin.gpio_x, cs_pin.gpio_pin, GPIO_PIN_SET);
 //    delayMicroseconds(1);
-    return buf;
+    return receve_data;
 }
 
-inline void L6470::transmit_24bit(uint32_t val){
+inline void L6470::transmit_24bit(uint32_t value){
     for (int i = 0; i < 3; i++){
-        transmit_receve(val >> (8*(2-i)));
+        transmit_receve(value >> (8*(2-i)));
     }
 }
 

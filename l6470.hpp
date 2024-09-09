@@ -13,9 +13,9 @@ struct GPIO_Pin {
 
 class L6470 {
 public:
-	L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin, GPIO_Pin flag_pin, GPIO_Pin busy_pin, GPIO_Pin stck_pin, GPIO_Pin rst_pin);
-	L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin, GPIO_Pin flag_pin, GPIO_Pin busy_pin, GPIO_Pin stck_pin);
-	L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin);
+	L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin, GPIO_Pin flag_pin, GPIO_Pin busy_pin, GPIO_Pin stck_pin, GPIO_Pin rst_pin, uint8_t timeout);
+	L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin, GPIO_Pin flag_pin, GPIO_Pin busy_pin, GPIO_Pin stck_pin, uint8_t timeout);
+	L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin, uint8_t timeout);
 
     //--- basic functions ---//
     void init();
@@ -53,8 +53,8 @@ public:
     void soft_reset();
 
 private:
-    uint8_t transmit_receve(uint8_t send);
-    void transmit_24bit(uint32_t val);
+    uint8_t transmit_receve(uint8_t transmit_data);
+    void transmit_24bit(uint32_t value);
     bool is_busy();
     void wait_busy();
 
@@ -65,6 +65,7 @@ private:
     GPIO_Pin busy_pin;
     GPIO_Pin stck_pin;
     GPIO_Pin rst_pin;
+    uint8_t timeout;
 };
 
 };
