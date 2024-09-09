@@ -58,14 +58,12 @@ private:
     void wait_busy();
 
     StepMode step_mode;
-    uint16_t config;
     SPI_HandleTypeDef* hspi;
     GPIO_Pin cs_pin;
     GPIO_Pin flag_pin;
     GPIO_Pin busy_pin;
     GPIO_Pin stck_pin;
     GPIO_Pin rst_pin;
-    uint8_t cmd;
 };
 
 };

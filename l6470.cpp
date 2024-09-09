@@ -11,7 +11,6 @@ L6470::L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin, GPIO_Pin flag_pin, GPIO_P
     stck_pin(stck_pin),
     rst_pin(rst_pin)
 {
-    config = 0x0000;
 }
 
 L6470::L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin, GPIO_Pin flag_pin, GPIO_Pin busy_pin, GPIO_Pin stck_pin):
@@ -21,14 +20,12 @@ L6470::L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin, GPIO_Pin flag_pin, GPIO_P
     busy_pin(busy_pin),
     stck_pin(stck_pin)
 {
-    config = 0x0000;
 }
 
 L6470::L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin):
     hspi(&hspi),
     cs_pin(cs_pin)
 {
-    config = 0x0000;
 }
 
 
@@ -51,10 +48,7 @@ void L6470::begin(){
     set_param(Addres::ADR_KVAL_RUN,1,0xff);
     set_param(Addres::ADR_KVAL_ACC,1,0xff);
     set_param(Addres::ADR_KVAL_DEC,1,0xff);
-    set_param(Addres::ADR_STEP_MODE,1,0x07);
-    config = get_param(Addres::ADR_CONFIG,2);
-
-    step_mode = get_step_mode();
+    set_step_mode(StepMode::MICRO_STEP128);
 }
 
 void L6470::set_hold_kval(uint8_t val){
@@ -66,7 +60,7 @@ inline uint8_t L6470::xfer(uint8_t send){
 
 //    while(!HAL_GPIO_ReadPin(busy_pin.gpio_x, busy_pin.GPIO_Pin)){} //BESYが解除されるまで待機
     HAL_GPIO_WritePin(cs_pin.gpio_x, cs_pin.gpio_pin, GPIO_PIN_RESET);
-//    HAL_SPI_TransmitReceive(hspi,(uint8_t*)&send, (uint8_t*)&buf, sizeof(send), 1000);
+//    HAL_SPI_TransmitReceive(hspi,(uint8_t*)&send, (uint8_t*)&buf, sizeof(send), 1000); // todo これを有効にする
     HAL_SPI_Transmit(hspi,(uint8_t*)&send, sizeof(send), 1000);
     HAL_GPIO_WritePin(cs_pin.gpio_x, cs_pin.gpio_pin, GPIO_PIN_SET);
 //    delayMicroseconds(1);
@@ -90,42 +84,30 @@ inline void L6470::wait_busy(){
 
 //--- Set or Get comunicate functions ---//
 uint32_t L6470::get_param(Addres addr, uint8_t size){
+    xfer(Command::CMD_GET_PARAM | (uint8_t)addr);
+
     uint32_t buf;
-
-    cmd = Command::CMD_GET_PARAM | (uint8_t)addr;
-
-    xfer(cmd);
     for (int i = 0; i < size; i++){
         buf |= xfer(Command::CMD_NOP) << (8*(size-1-i));
     }
-
     return buf;
 }
 
 void L6470::set_param(Addres addr, uint8_t size, uint8_t val){
-    cmd = Command::CMD_SET_PARAM | (uint8_t)addr;
+    xfer(Command::CMD_SET_PARAM | (uint8_t)addr);
 
-    xfer(cmd);
     for (int i = 0; i < size; i++){
         xfer(val >> (8*(size-1-i)));
     }
 }
 
 void L6470::set_step_mode(StepMode mode){
-    uint8_t buf;
-    buf = get_param(Addres::ADR_STEP_MODE,1);
-    buf = buf & MASK_STEP_SEL;
-
     set_param(Addres::ADR_STEP_MODE,1,(uint8_t)mode);
-
     step_mode = get_step_mode();
 }
 
 StepMode L6470::get_step_mode(){
-    uint8_t buf;
-    buf = get_param(Addres::ADR_STEP_MODE,1);
-    buf = buf & MASK_STEP_SEL;
-    return (StepMode)buf;
+    return (StepMode)(get_param(Addres::ADR_STEP_MODE,1) & MASK_STEP_SEL);
 }
 
 //--- Motor action functions --- //
@@ -135,9 +117,7 @@ void L6470::run(uint32_t speed, Direction dir){
 }
 
 void L6470::move(uint32_t step, Direction dir, bool is_wait){
-    get_step_mode();
-
-    step = step*num_step[(uint8_t)step_mode];
+    step = step*num_step[(uint8_t)step_mode]; // step_mode変数が常に最新であることが前提なので，非安全な処理である
 
     xfer(Command::CMD_MOVE | (uint8_t)dir);
     send_24bit(step);
@@ -192,7 +172,7 @@ void L6470::stck_pulse(){
 }
 
 void L6470::set_interrupt(SwMode mode){
-    config = get_param(Addres::ADR_CONFIG,2);
+	uint16_t config = get_param(Addres::ADR_CONFIG,2);
 
     if(mode == SwMode::HardStopInterrupt){
         config = config & 0xffef;
