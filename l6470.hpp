@@ -18,14 +18,15 @@ public:
 	L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin);
 
     //--- basic functions ---//
-    void begin();
+    void init();
 
     //--- Set or Get communicate functions ---//
     uint32_t get_param(Address addr, uint8_t size);
     void set_param(Address addr, uint8_t size, uint8_t val);
-    void set_hold_kval(uint8_t val);
-    StepMode get_step_mode();
+
+    void set_kval_hold(uint8_t val);
     void set_step_mode(StepMode mode);
+    StepMode get_step_mode();
 
     //--- Motor action functions --- //
     void run(uint32_t speed, Direction dir);
@@ -52,8 +53,8 @@ public:
     void soft_reset();
 
 private:
-    uint8_t xfer(uint8_t send);
-    void send_24bit(uint32_t val);
+    uint8_t transmit_receve(uint8_t send);
+    void transmit_24bit(uint32_t val);
     bool is_busy();
     void wait_busy();
 

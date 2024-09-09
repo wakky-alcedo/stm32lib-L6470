@@ -30,7 +30,7 @@ L6470::L6470(SPI_HandleTypeDef& hspi, GPIO_Pin cs_pin):
 
 
 //--- basic functions ---//
-void L6470::begin(){
+void L6470::init(){
     if (rst_pin.gpio_x != 0x00) {
         HAL_GPIO_WritePin(rst_pin.gpio_x, rst_pin.gpio_pin, GPIO_PIN_SET);
     }
@@ -44,18 +44,18 @@ void L6470::begin(){
     set_param(Address::ADR_MAX_SPEED,2,0x03f);
     set_param(Address::ADR_MIN_SPEED,2,0xfff);
     set_param(Address::ADR_FS_SPD,2,0x3ff);
-    set_hold_kval(125);
+    set_kval_hold(125);
     set_param(Address::ADR_KVAL_RUN,1,0xff);
     set_param(Address::ADR_KVAL_ACC,1,0xff);
     set_param(Address::ADR_KVAL_DEC,1,0xff);
     set_step_mode(StepMode::MICRO_STEP128);
 }
 
-void L6470::set_hold_kval(uint8_t val){
+void L6470::set_kval_hold(uint8_t val){
     set_param(Address::ADR_KVAL_HOLD,1,val);
 }
 
-inline uint8_t L6470::xfer(uint8_t send){
+inline uint8_t L6470::transmit_receve(uint8_t send){
     uint8_t buf = 0;
 
 //    while(!HAL_GPIO_ReadPin(busy_pin.gpio_x, busy_pin.GPIO_Pin)){} //BESYが解除されるまで待機
@@ -67,9 +67,9 @@ inline uint8_t L6470::xfer(uint8_t send){
     return buf;
 }
 
-inline void L6470::send_24bit(uint32_t val){
+inline void L6470::transmit_24bit(uint32_t val){
     for (int i = 0; i < 3; i++){
-        xfer(val >> (8*(2-i)));
+        transmit_receve(val >> (8*(2-i)));
     }
 }
 
@@ -84,20 +84,20 @@ inline void L6470::wait_busy(){
 
 //--- Set or Get comunicate functions ---//
 uint32_t L6470::get_param(Address addr, uint8_t size){
-    xfer(Command::CMD_GET_PARAM | (uint8_t)addr);
+    transmit_receve(Command::CMD_GET_PARAM | (uint8_t)addr);
 
     uint32_t buf = 0;
     for (int i = 0; i < size; i++){
-        buf |= xfer(Command::CMD_NOP) << (8*(size-1-i));
+        buf |= transmit_receve(Command::CMD_NOP) << (8*(size-1-i));
     }
     return buf;
 }
 
 void L6470::set_param(Address addr, uint8_t size, uint8_t val){
-    xfer(Command::CMD_SET_PARAM | (uint8_t)addr);
+    transmit_receve(Command::CMD_SET_PARAM | (uint8_t)addr);
 
     for (int i = 0; i < size; i++){
-        xfer(val >> (8*(size-1-i)));
+        transmit_receve(val >> (8*(size-1-i)));
     }
 }
 
@@ -112,53 +112,53 @@ StepMode L6470::get_step_mode(){
 
 //--- Motor action functions --- //
 void L6470::run(uint32_t speed, Direction dir){
-    xfer(Command::CMD_RUN | (uint8_t)dir);
-    send_24bit(speed);
+    transmit_receve(Command::CMD_RUN | (uint8_t)dir);
+    transmit_24bit(speed);
 }
 
 void L6470::move(uint32_t step, Direction dir, bool is_wait){
     step = step*num_step[(uint8_t)step_mode]; // step_mode変数が常に最新であることが前提なので，非安全な処理である
 
-    xfer(Command::CMD_MOVE | (uint8_t)dir);
-    send_24bit(step);
+    transmit_receve(Command::CMD_MOVE | (uint8_t)dir);
+    transmit_24bit(step);
 
     if(is_wait)wait_busy();
 }
 
 void L6470::go_to(uint32_t pos, bool is_wait){
-    xfer(Command::CMD_GOTO);
-    send_24bit(pos);
+    transmit_receve(Command::CMD_GOTO);
+    transmit_24bit(pos);
 
     if(is_wait)wait_busy();
 }
 
 void L6470::go_to_dir(uint32_t pos, Direction dir, bool is_wait){
-    xfer(Command::CMD_GOTO_DIR | (uint8_t)dir);
-    send_24bit(pos);
+    transmit_receve(Command::CMD_GOTO_DIR | (uint8_t)dir);
+    transmit_24bit(pos);
 
     if(is_wait)wait_busy();
 }
 
 void L6470::go_until(uint32_t speed, Direction dir, uint8_t act, bool is_wait){
-    xfer(Command::CMD_GO_UNTIL | (uint8_t)dir | act);
-    send_24bit(speed);
+    transmit_receve(Command::CMD_GO_UNTIL | (uint8_t)dir | act);
+    transmit_24bit(speed);
 
     if(is_wait)wait_busy();
 }
 
 void L6470::release_sw(Direction dir, uint8_t act, bool is_wait){
-    xfer(Command::CMD_RELEASE_SW | (uint8_t)dir | act);
+    transmit_receve(Command::CMD_RELEASE_SW | (uint8_t)dir | act);
 
     if(is_wait)wait_busy();
 }
 
-void L6470::go_home(){ xfer(Command::CMD_GO_HOME); }
-void L6470::go_mark(){ xfer(Command::CMD_GO_MARK); }
-void L6470::reset_pos(){ xfer(Command::CMD_RESET_POS); }
-void L6470::hard_stop(){ xfer(Command::CMD_HARD_STOP); }
-void L6470::soft_stop(){ xfer(Command::CMD_SOFT_STOP); }
-void L6470::hard_hiz(){ xfer(Command::CMD_HARD_HIZ); }
-void L6470::soft_hiz(){ xfer(Command::CMD_SOFT_HIZ); }
+void L6470::go_home(){ transmit_receve(Command::CMD_GO_HOME); }
+void L6470::go_mark(){ transmit_receve(Command::CMD_GO_MARK); }
+void L6470::reset_pos(){ transmit_receve(Command::CMD_RESET_POS); }
+void L6470::hard_stop(){ transmit_receve(Command::CMD_HARD_STOP); }
+void L6470::soft_stop(){ transmit_receve(Command::CMD_SOFT_STOP); }
+void L6470::hard_hiz(){ transmit_receve(Command::CMD_HARD_HIZ); }
+void L6470::soft_hiz(){ transmit_receve(Command::CMD_SOFT_HIZ); }
 
 long L6470::get_abs_pos(){
     return (long)((get_param(Address::ADR_ABS_POS,3)) << 10) / 1024;
@@ -184,7 +184,7 @@ void L6470::set_interrupt(SwMode mode){
 }
 
 void L6470::set_step_clock(Direction dir){
-    xfer(Command::CMD_STEP_CLOCK | (uint8_t)dir);
+    transmit_receve(Command::CMD_STEP_CLOCK | (uint8_t)dir);
 }
 
 void L6470::hard_reset(){
@@ -196,10 +196,10 @@ void L6470::hard_reset(){
 }
 
 void L6470::soft_reset(){
-    xfer(Command::CMD_NOP);
-    xfer(Command::CMD_NOP);
-    xfer(Command::CMD_NOP);
-    xfer(Command::CMD_NOP);
-    xfer(Command::CMD_RESET_DEVICE);
+    transmit_receve(Command::CMD_NOP);
+    transmit_receve(Command::CMD_NOP);
+    transmit_receve(Command::CMD_NOP);
+    transmit_receve(Command::CMD_NOP);
+    transmit_receve(Command::CMD_RESET_DEVICE);
     HAL_Delay(100);
 }
