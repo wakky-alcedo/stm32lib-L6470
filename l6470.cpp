@@ -12,14 +12,8 @@ L6470::L6470(SPI_HandleTypeDef& hspi, GPIO_pin cs_pin, GPIO_pin flag_pin, GPIO_p
 	rst_pin(rst_pin)
 {
     _config = 0x0000;
-
-//    pinMode(_cs,OUTPUT);
-//    pinMode(_flag,INPUT);
-//    pinMode(_busy,INPUT);
-//    pinMode(_stck,OUTPUT);
-//    pinMode(_rst,OUTPUT);
-
 }
+
 L6470::L6470(SPI_HandleTypeDef& hspi, GPIO_pin cs_pin, GPIO_pin flag_pin, GPIO_pin busy_pin, GPIO_pin stck_pin):
 	hspi(&hspi),
 	cs_pin(cs_pin),
@@ -45,7 +39,6 @@ void L6470::begin(){
 	}
     HAL_GPIO_WritePin(cs_pin.GPIOx, cs_pin.GPIO_Pin, GPIO_PIN_SET);
 
-    setSPImode();
     HardReset();
     SoftReset();
 
@@ -64,11 +57,6 @@ void L6470::begin(){
     _stepmode = GetStepMode();
 }
 
-inline void L6470::setSPImode(){
-//  SPI.setDataMode(SPI_MODE3);
-//  SPI.setBitOrder(MSBFIRST);
-}
-
 void L6470::SetHoldKVAL(uint8_t val){
     SetParam(Addres::ADR_KVAL_HOLD,1,val);
 }
@@ -76,7 +64,6 @@ void L6470::SetHoldKVAL(uint8_t val){
 inline uint8_t L6470::xfer(uint8_t send){
     uint8_t buf = 0;
 
-    setSPImode();
 //    while(!HAL_GPIO_ReadPin(busy_pin.GPIOx, busy_pin.GPIO_Pin)){} //BESYが解除されるまで待機
     HAL_GPIO_WritePin(cs_pin.GPIOx, cs_pin.GPIO_Pin, GPIO_PIN_RESET);
 //	HAL_SPI_TransmitReceive(hspi,(uint8_t*)&send, (uint8_t*)&buf, sizeof(send), 1000);

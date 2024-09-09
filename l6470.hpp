@@ -52,7 +52,6 @@ class L6470
         void SoftReset();
 
     private:
-        void setSPImode();
         uint8_t xfer(uint8_t send);
         void send24bit(uint32_t val);
         bool is_busy();
